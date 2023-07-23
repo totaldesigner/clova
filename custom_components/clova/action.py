@@ -33,6 +33,8 @@ from homeassistant.const import (
     ATTR_ENTITY_ID,
     ATTR_TEMPERATURE,
     CONF_NAME,
+    SERVICE_CLOSE_COVER,
+    SERVICE_OPEN_COVER,
     SERVICE_TURN_OFF,
     SERVICE_TURN_ON,
     STATE_IDLE,
@@ -115,6 +117,43 @@ class _action:
         """Execute a trait command."""
         raise NotImplementedError
 
+        
+@register_action
+class Open(_action):
+    """ OPEN 액션 """
+
+    name = "Open"
+ 
+    @staticmethod
+    def supported(domain, features, device_class, attributes):
+        return domain in _ACTIONS["Open"].domain
+
+    async def execute(self, data, params):
+        await self.hass.services.async_call(
+            cover.DOMAIN,
+            SERVICE_OPEN_COVER,
+            {ATTR_ENTITY_ID: self.state.entity_id},
+            blocking=True,
+        )
+
+        
+@register_action
+class Close(_action):
+    """ CLOSE 액션 """
+
+    name = "Close"
+ 
+    @staticmethod
+    def supported(domain, features, device_class, attributes):
+        return domain in _ACTIONS["Close"].domain
+
+    async def execute(self, data, params):
+        await self.hass.services.async_call(
+            cover.DOMAIN,
+            SERVICE_CLOSE_COVER,
+            {ATTR_ENTITY_ID: self.state.entity_id},
+            blocking=True,
+        )
 
 
 @register_action
